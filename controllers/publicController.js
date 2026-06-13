@@ -227,15 +227,34 @@ const getDokumen = (req, res) => {
 
 const getPengaduan = (req, res) => {
   res.render('public/pengaduan', {
-    title: 'Kontak dan Pengaduan - Desa Way Ilahan'
+    title: 'Kontak dan Pengaduan - Desa Way Ilahan',
+    successMessage: '',
+    errorMessage: '',
+    formData: {
+      nama: '',
+      email: '',
+      telepon: '',
+      judul: '',
+      isi: ''
+    }
   });
 };
 
 const postPengaduan = (req, res) => {
   const { nama, email, telepon, judul, isi } = req.body;
+  const wantsJson = req.xhr || (req.get('Accept') && req.get('Accept').includes('application/json'));
+  const formData = { nama, email, telepon, judul, isi };
 
   if (!nama || !email || !judul || !isi) {
-    return res.status(400).json({ success: false, message: 'Semua field harus diisi' });
+    if (wantsJson) {
+      return res.status(400).json({ success: false, message: 'Semua field harus diisi' });
+    }
+    return res.status(400).render('public/pengaduan', {
+      title: 'Kontak dan Pengaduan - Desa Way Ilahan',
+      successMessage: '',
+      errorMessage: 'Semua field harus diisi',
+      formData
+    });
   }
 
   db.run(
@@ -244,11 +263,33 @@ const postPengaduan = (req, res) => {
     [nama, email, telepon, judul, isi],
     function(err) {
       if (err) {
-        return res.status(500).json({ success: false, message: 'Error menyimpan pengaduan' });
+        if (wantsJson) {
+          return res.status(500).json({ success: false, message: 'Error menyimpan pengaduan' });
+        }
+        return res.status(500).render('public/pengaduan', {
+          title: 'Kontak dan Pengaduan - Desa Way Ilahan',
+          successMessage: '',
+          errorMessage: 'Terjadi kesalahan menyimpan pengaduan. Silakan coba lagi.',
+          formData
+        });
       }
-      res.json({ 
-        success: true, 
-        message: 'Pengaduan kami terima dengan baik. Terima kasih atas masukan Anda.' 
+      if (wantsJson) {
+        return res.json({ 
+          success: true, 
+          message: 'Pengaduan kami terima dengan baik. Terima kasih atas masukan Anda.' 
+        });
+      }
+      res.render('public/pengaduan', {
+        title: 'Kontak dan Pengaduan - Desa Way Ilahan',
+        successMessage: 'Pengaduan kami terima dengan baik. Terima kasih atas masukan Anda.',
+        errorMessage: '',
+        formData: {
+          nama: '',
+          email: '',
+          telepon: '',
+          judul: '',
+          isi: ''
+        }
       });
     }
   );
