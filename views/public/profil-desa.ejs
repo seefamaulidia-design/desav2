@@ -1,0 +1,70 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Profil Desa Way Ilahan</h1>
+
+        <% if (profil) { %>
+            <div class="profile-section">
+                <div class="profile-header">
+                    <h2>Informasi Umum</h2>
+                </div>
+                <div class="profile-info">
+                    <div class="info-row">
+                        <label>Nama Desa:</label>
+                        <span><%= profil.nama_desa %></span>
+                    </div>
+                    <div class="info-row">
+                        <label>Provinsi:</label>
+                        <span><%= profil.provinsi %></span>
+                    </div>
+                    <div class="info-row">
+                        <label>Kabupaten:</label>
+                        <span><%= profil.kabupaten %></span>
+                    </div>
+                    <div class="info-row">
+                        <label>Kecamatan:</label>
+                        <span><%= profil.kecamatan %></span>
+                    </div>
+                    <div class="info-row">
+                        <label>Kode Pos:</label>
+                        <span><%= profil.kode_pos || '-' %></span>
+                    </div>
+                </div>
+            </div>
+
+            <% if (profil.visi || profil.misi) { %>
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <h2>Visi dan Misi</h2>
+                    </div>
+                    <% if (profil.visi) { %>
+                        <div class="vision-mission">
+                            <h3>Visi</h3>
+                            <p><%= profil.visi %></p>
+                        </div>
+                    <% } %>
+                    <% if (profil.misi) { %>
+                        <div class="vision-mission">
+                            <h3>Misi</h3>
+                            <p><%= profil.misi %></p>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <% if (profil.deskripsi) { %>
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <h2>Deskripsi Desa</h2>
+                    </div>
+                    <p><%= profil.deskripsi %></p>
+                </div>
+            <% } %>
+        <% } else { %>
+            <div class="alert alert-info">
+                <p>Data profil desa belum tersedia. Silakan hubungi administrasi desa.</p>
+            </div>
+        <% } %>
+    </div>
+</section>

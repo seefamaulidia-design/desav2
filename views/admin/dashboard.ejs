@@ -1,0 +1,129 @@
+<%- include('../layout') %>
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+                <p><%= admin.nama_lengkap %></p>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Dashboard Admin</h1>
+                <p>Selamat datang, <%= admin.nama_lengkap %></p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="dashboard-stats">
+                <div class="stat-box">
+                    <div class="stat-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.penduduk %></h3>
+                        <p>Total Penduduk</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon berita">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.berita %></h3>
+                        <p>Total Berita</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon pengumuman">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.pengumuman %></h3>
+                        <p>Total Pengumuman</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon pengaduan">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.pengaduan_baru %></h3>
+                        <p>Pengaduan Baru</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-section">
+                <h2>Aktivitas Terakhir</h2>
+                <div class="activity-list">
+                    <% if (logs && logs.length > 0) { %>
+                        <% logs.forEach(log => { %>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-circle-check"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong><%= log.aksi %></strong></p>
+                                    <p class="activity-time">
+                                        <%= new Date(log.created_at).toLocaleDateString('id-ID') %>
+                                        <%= new Date(log.created_at).toLocaleTimeString('id-ID') %>
+                                    </p>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>Belum ada aktivitas</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-section">
+                <h2>Akses Cepat</h2>
+                <div class="quick-actions">
+                    <a href="/admin/data-penduduk" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <h3>Tambah Penduduk</h3>
+                    </a>
+                    <a href="/admin/berita" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <h3>Tulis Berita</h3>
+                    </a>
+                    <a href="/admin/pengumuman" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <h3>Buat Pengumuman</h3>
+                    </a>
+                    <a href="/admin/keuangan" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <h3>Kelola Keuangan</h3>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</section>

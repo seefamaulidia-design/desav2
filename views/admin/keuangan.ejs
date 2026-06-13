@@ -1,0 +1,184 @@
+<%- include('../layout') %>
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item active">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Kelola Keuangan Desa (APBDes)</h1>
+            </div>
+
+            <!-- Filter Tahun -->
+            <div class="admin-toolbar">
+                <form method="GET" action="/admin/keuangan" class="year-filter">
+                    <label>Tahun:</label>
+                    <select name="tahun" onchange="this.form.submit()">
+                        <option value="2022" <%= tahun == 2022 ? 'selected' : '' %>>2022</option>
+                        <option value="2023" <%= tahun == 2023 ? 'selected' : '' %>>2023</option>
+                        <option value="2024" <%= tahun == 2024 ? 'selected' : '' %>>2024</option>
+                        <option value="2025" <%= tahun == 2025 ? 'selected' : '' %>>2025</option>
+                    </select>
+                </form>
+                <button class="btn btn-primary" onclick="showAddForm()">
+                    <i class="fas fa-plus"></i> Tambah Item Keuangan
+                </button>
+            </div>
+
+            <!-- Add Form -->
+            <div id="formContainer" class="form-container" style="display: none;">
+                <h3>Tambah Item Keuangan</h3>
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label>Tahun *</label>
+                        <input type="number" name="tahun" value="<%= tahun %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Item Pengeluaran *</label>
+                        <input type="text" name="item_pengeluaran" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah (Rp) *</label>
+                        <input type="number" name="jumlah" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Keterangan</label>
+                        <textarea name="keterangan" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Item Pengeluaran</th>
+                            <th>Jumlah</th>
+                            <th>Status</th>
+                            <th>Keterangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (apbdes && apbdes.length > 0) { %>
+                            <% let total = 0; %>
+                            <% apbdes.forEach(item => { %>
+                                <% total += item.jumlah; %>
+                                <tr>
+                                    <td><%= item.item_pengeluaran %></td>
+                                    <td>Rp <%= item.jumlah.toLocaleString('id-ID') %></td>
+                                    <td>
+                                        <select onchange="updateStatus(<%= item.id %>, this.value)" class="status-select">
+                                            <option value="terencana" <%= item.status == 'terencana' ? 'selected' : '' %>>Terencana</option>
+                                            <option value="dalam_proses" <%= item.status == 'dalam_proses' ? 'selected' : '' %>>Dalam Proses</option>
+                                            <option value="selesai" <%= item.status == 'selesai' ? 'selected' : '' %>>Selesai</option>
+                                        </select>
+                                    </td>
+                                    <td><%= item.keterangan || '-' %></td>
+                                    <td>
+                                        <button class="btn-small btn-delete" onclick="deleteData(<%= item.id %>)">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                            <tr class="total-row">
+                                <td><strong>TOTAL</strong></td>
+                                <td><strong>Rp <%= total.toLocaleString('id-ID') %></strong></td>
+                                <td colspan="3"></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</section>
+
+<script>
+function showAddForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').reset();
+}
+
+function hideForm() {
+    document.getElementById('formContainer').style.display = 'none';
+}
+
+document.getElementById('dataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    fetch('/admin/keuangan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    });
+});
+
+function deleteData(id) {
+    if (confirm('Yakin ingin menghapus data ini?')) {
+        fetch(`/admin/keuangan/${id}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) location.reload();
+            else alert(d.message);
+        });
+    }
+}
+
+function updateStatus(id, status) {
+    const formData = new FormData();
+    formData.append('status', status);
+
+    fetch(`/admin/keuangan/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (!d.success) alert(d.message);
+    });
+}
+</script>

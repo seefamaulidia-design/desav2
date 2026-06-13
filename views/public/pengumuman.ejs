@@ -1,0 +1,27 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Pengumuman</h1>
+
+        <div class="pengumuman-list">
+            <% if (pengumuman && pengumuman.length > 0) { %>
+                <% pengumuman.forEach(item => { %>
+                    <div class="pengumuman-item">
+                        <div class="pengumuman-header">
+                            <h3><%= item.judul %></h3>
+                            <p class="pengumuman-date">
+                                <i class="fas fa-calendar"></i> <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                            </p>
+                        </div>
+                        <div class="pengumuman-content">
+                            <%- item.konten %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p class="no-data">Tidak ada pengumuman</p>
+            <% } %>
+        </div>
+    </div>
+</section>

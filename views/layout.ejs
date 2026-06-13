@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Desa Way Ilahan' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="/" class="logo">
+                    <i class="fas fa-map-location-dot"></i> Desa Way Ilahan
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Beranda</a>
+                <a href="/profil-desa" class="nav-link">Profil Desa</a>
+                <div class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Informasi</a>
+                    <div class="dropdown-menu">
+                        <a href="/data-penduduk" class="dropdown-item">Data Penduduk</a>
+                        <a href="/wilayah" class="dropdown-item">Data Dusun/RW/RT</a>
+                        <a href="/aparatur" class="dropdown-item">Aparatur Desa</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Keuangan</a>
+                    <div class="dropdown-menu">
+                        <a href="/apbdes" class="dropdown-item">APBDes</a>
+                        <a href="/realisasi-anggaran" class="dropdown-item">Realisasi Anggaran</a>
+                    </div>
+                </div>
+                <a href="/program-kegiatan" class="nav-link">Program & Kegiatan</a>
+                <a href="/berita" class="nav-link">Berita</a>
+                <a href="/pengumuman" class="nav-link">Pengumuman</a>
+                <div class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Lainnya</a>
+                    <div class="dropdown-menu">
+                        <a href="/galeri" class="dropdown-item">Galeri Foto</a>
+                        <a href="/dokumen" class="dropdown-item">Dokumen Publik</a>
+                        <a href="/pengaduan" class="dropdown-item">Kontak & Pengaduan</a>
+                    </div>
+                </div>
+                <% if (isLoggedIn) { %>
+                    <div class="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle"><%= admin.nama_lengkap %></a>
+                        <div class="dropdown-menu">
+                            <a href="/admin/dashboard" class="dropdown-item">Dashboard Admin</a>
+                            <a href="/admin/logout" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <a href="/admin/login" class="nav-link btn-login">Login Admin</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Desa Way Ilahan</h3>
+                    <p>Kecamatan Pulau Panggung<br>Kabupaten Tanggamus<br>Provinsi Lampung</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontak</h3>
+                    <p>Telepon: (0726) XXXXXXX<br>Email: info@desawayilahan.id</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="/">Beranda</a></li>
+                        <li><a href="/berita">Berita</a></li>
+                        <li><a href="/pengaduan">Kontak</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Desa Way Ilahan. Sistem Transparansi Data dan Keuangan Desa. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

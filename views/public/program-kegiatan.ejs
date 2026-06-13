@@ -1,0 +1,34 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Program dan Kegiatan Desa</h1>
+
+        <div class="program-grid">
+            <% if (program && program.length > 0) { %>
+                <% program.forEach(p => { %>
+                    <div class="program-card">
+                        <div class="program-header">
+                            <h3><%= p.nama_program %></h3>
+                            <span class="status <%= p.status %>">
+                                <%= p.status == 'berlangsung' ? 'Berlangsung' : 'Selesai' %>
+                            </span>
+                        </div>
+                        <div class="program-body">
+                            <p><%= p.deskripsi %></p>
+                            <div class="program-info">
+                                <p><strong>Lokasi:</strong> <%= p.lokasi %></p>
+                                <p><strong>Penanggung Jawab:</strong> <%= p.penanggung_jawab %></p>
+                                <% if (p.tanggal_mulai) { %>
+                                    <p><strong>Periode:</strong> <%= new Date(p.tanggal_mulai).toLocaleDateString('id-ID') %> - <%= new Date(p.tanggal_selesai).toLocaleDateString('id-ID') %></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p class="no-data">Tidak ada program dan kegiatan</p>
+            <% } %>
+        </div>
+    </div>
+</section>

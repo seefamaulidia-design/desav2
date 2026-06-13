@@ -1,0 +1,55 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Berita Desa Way Ilahan</h1>
+
+        <div class="news-grid">
+            <% if (berita && berita.length > 0) { %>
+                <% berita.forEach(item => { %>
+                    <article class="news-card">
+                        <% if (item.foto) { %>
+                            <div class="news-image">
+                                <img src="/uploads/<%= item.foto %>" alt="<%= item.judul %>">
+                            </div>
+                        <% } %>
+                        <div class="news-content">
+                            <h3><a href="/berita/<%= item.id %>"><%= item.judul %></a></h3>
+                            <p class="news-meta">
+                                <i class="fas fa-user"></i> <%= item.penulis %> | 
+                                <i class="fas fa-calendar"></i> <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                            </p>
+                            <p><%= item.konten.substring(0, 200) %>...</p>
+                            <a href="/berita/<%= item.id %>" class="read-more">Baca Selengkapnya →</a>
+                        </div>
+                    </article>
+                <% }); %>
+            <% } else { %>
+                <p class="no-data">Belum ada berita</p>
+            <% } %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/berita?page=1" class="btn-page">« Pertama</a>
+                    <a href="/berita?page=<%= currentPage - 1 %>" class="btn-page">‹ Sebelumnya</a>
+                <% } %>
+                
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <span class="page-current"><%= i %></span>
+                    <% } else if (i >= currentPage - 2 && i <= currentPage + 2) { %>
+                        <a href="/berita?page=<%= i %>" class="btn-page"><%= i %></a>
+                    <% } %>
+                <% } %>
+                
+                <% if (currentPage < totalPages) { %>
+                    <a href="/berita?page=<%= currentPage + 1 %>" class="btn-page">Selanjutnya ›</a>
+                    <a href="/berita?page=<%= totalPages %>" class="btn-page">Terakhir »</a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</section>

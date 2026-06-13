@@ -1,0 +1,64 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Data Penduduk Desa Way Ilahan</h1>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>NIK</th>
+                        <th>Nama</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Tempat/Tanggal Lahir</th>
+                        <th>Alamat</th>
+                        <th>Pekerjaan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (penduduk && penduduk.length > 0) { %>
+                        <% penduduk.forEach(p => { %>
+                            <tr>
+                                <td><%= p.nik %></td>
+                                <td><%= p.nama %></td>
+                                <td><%= p.jenis_kelamin %></td>
+                                <td><%= p.tempat_lahir %>, <%= p.tanggal_lahir %></td>
+                                <td><%= p.alamat %> (RT <%= p.rt %> RW <%= p.rw %>)</td>
+                                <td><%= p.pekerjaan || '-' %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">Tidak ada data penduduk</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/data-penduduk?page=1" class="btn-page">« Pertama</a>
+                    <a href="/data-penduduk?page=<%= currentPage - 1 %>" class="btn-page">‹ Sebelumnya</a>
+                <% } %>
+                
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <span class="page-current"><%= i %></span>
+                    <% } else if (i >= currentPage - 2 && i <= currentPage + 2) { %>
+                        <a href="/data-penduduk?page=<%= i %>" class="btn-page"><%= i %></a>
+                    <% } %>
+                <% } %>
+                
+                <% if (currentPage < totalPages) { %>
+                    <a href="/data-penduduk?page=<%= currentPage + 1 %>" class="btn-page">Selanjutnya ›</a>
+                    <a href="/data-penduduk?page=<%= totalPages %>" class="btn-page">Terakhir »</a>
+                <% } %>
+            </div>
+            <p class="pagination-info">Halaman <%= currentPage %> dari <%= totalPages %> | Total: <%= total %> penduduk</p>
+        <% } %>
+    </div>
+</section>

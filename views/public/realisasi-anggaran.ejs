@@ -1,0 +1,55 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Realisasi Anggaran</h1>
+
+        <div class="filter-year">
+            <form method="GET" action="/realisasi-anggaran" class="year-filter">
+                <label>Tahun:</label>
+                <select name="tahun" onchange="this.form.submit()">
+                    <option value="2022" <%= tahun == 2022 ? 'selected' : '' %>>2022</option>
+                    <option value="2023" <%= tahun == 2023 ? 'selected' : '' %>>2023</option>
+                    <option value="2024" <%= tahun == 2024 ? 'selected' : '' %>>2024</option>
+                    <option value="2025" <%= tahun == 2025 ? 'selected' : '' %>>2025</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item Pengeluaran</th>
+                        <th>Anggaran</th>
+                        <th>Realisasi</th>
+                        <th>Persentase</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (realisasi && realisasi.length > 0) { %>
+                        <% realisasi.forEach(item => { %>
+                            <tr>
+                                <td><%= item.item_pengeluaran %></td>
+                                <td class="amount">Rp <%= item.anggaran.toLocaleString('id-ID') %></td>
+                                <td class="amount">Rp <%= item.realisasi.toLocaleString('id-ID') %></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: <%= item.persentase || 0 %>%"></div>
+                                    </div>
+                                    <%= item.persentase || 0 %>%
+                                </td>
+                                <td><%= item.keterangan || '-' %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada data realisasi anggaran untuk tahun <%= tahun %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

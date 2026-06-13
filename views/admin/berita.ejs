@@ -1,0 +1,138 @@
+<%- include('../layout') %>
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item active">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Kelola Berita</h1>
+            </div>
+
+            <!-- Add Button -->
+            <div class="admin-toolbar">
+                <button class="btn btn-primary" onclick="showAddForm()">
+                    <i class="fas fa-plus"></i> Tulis Berita Baru
+                </button>
+            </div>
+
+            <!-- Add Form -->
+            <div id="formContainer" class="form-container" style="display: none;">
+                <h3>Form Berita</h3>
+                <form id="dataForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Judul Berita *</label>
+                        <input type="text" name="judul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Penulis</label>
+                        <input type="text" name="penulis">
+                    </div>
+                    <div class="form-group">
+                        <label>Foto Berita</label>
+                        <input type="file" name="foto" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>Isi Berita *</label>
+                        <textarea name="konten" rows="8" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Publish</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Berita List -->
+            <div class="berita-list">
+                <% if (berita && berita.length > 0) { %>
+                    <% berita.forEach(item => { %>
+                        <div class="berita-item-admin">
+                            <div class="berita-header">
+                                <h3><%= item.judul %></h3>
+                                <p class="berita-date">
+                                    <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                                </p>
+                            </div>
+                            <p class="berita-excerpt"><%= item.konten.substring(0, 150) %>...</p>
+                            <p class="berita-author">Oleh: <%= item.penulis %></p>
+                            <div class="berita-actions">
+                                <button class="btn-small btn-delete" onclick="deleteBerita(<%= item.id %>)">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-data">Belum ada berita</p>
+                <% } %>
+            </div>
+        </main>
+    </div>
+</section>
+
+<script>
+function showAddForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').reset();
+}
+
+function hideForm() {
+    document.getElementById('formContainer').style.display = 'none';
+}
+
+document.getElementById('dataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch('/admin/berita', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    });
+});
+
+function deleteBerita(id) {
+    if (confirm('Yakin ingin menghapus berita ini?')) {
+        fetch(`/admin/berita/${id}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) location.reload();
+            else alert(d.message);
+        });
+    }
+}
+</script>

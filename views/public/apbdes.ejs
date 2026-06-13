@@ -1,0 +1,66 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>APBDes (Anggaran Pendapatan Belanja Desa)</h1>
+
+        <div class="filter-year">
+            <form method="GET" action="/apbdes" class="year-filter">
+                <label>Tahun:</label>
+                <select name="tahun" onchange="this.form.submit()">
+                    <option value="2022" <%= tahun == 2022 ? 'selected' : '' %>>2022</option>
+                    <option value="2023" <%= tahun == 2023 ? 'selected' : '' %>>2023</option>
+                    <option value="2024" <%= tahun == 2024 ? 'selected' : '' %>>2024</option>
+                    <option value="2025" <%= tahun == 2025 ? 'selected' : '' %>>2025</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item Pengeluaran</th>
+                        <th>Jumlah</th>
+                        <th>Status</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (apbdes && apbdes.length > 0) { %>
+                        <% apbdes.forEach(item => { %>
+                            <tr>
+                                <td><%= item.item_pengeluaran %></td>
+                                <td class="amount">Rp <%= item.jumlah.toLocaleString('id-ID') %></td>
+                                <td>
+                                    <span class="status <%= item.status %>">
+                                        <%= item.status == 'terencana' ? 'Terencana' : item.status == 'dalam_proses' ? 'Dalam Proses' : 'Selesai' %>
+                                    </span>
+                                </td>
+                                <td><%= item.keterangan || '-' %></td>
+                            </tr>
+                        <% }); %>
+                        <tr class="total-row">
+                            <td><strong>TOTAL</strong></td>
+                            <td class="amount"><strong>Rp <%= total.toLocaleString('id-ID') %></strong></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="text-center">Tidak ada data APBDes untuk tahun <%= tahun %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <h3>Keterangan Status</h3>
+            <ul>
+                <li><span class="status terencana">Terencana</span> - Anggaran yang telah direncanakan</li>
+                <li><span class="status dalam_proses">Dalam Proses</span> - Anggaran sedang dijalankan</li>
+                <li><span class="status selesai">Selesai</span> - Anggaran telah direalisasikan</li>
+            </ul>
+        </div>
+    </div>
+</section>

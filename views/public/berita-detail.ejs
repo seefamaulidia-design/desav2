@@ -1,0 +1,27 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <article class="berita-detail">
+            <h1><%= berita.judul %></h1>
+            <p class="berita-meta">
+                <i class="fas fa-user"></i> <%= berita.penulis %> | 
+                <i class="fas fa-calendar"></i> <%= new Date(berita.created_at).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}) %>
+            </p>
+
+            <% if (berita.foto) { %>
+                <div class="berita-image">
+                    <img src="/uploads/<%= berita.foto %>" alt="<%= berita.judul %>">
+                </div>
+            <% } %>
+
+            <div class="berita-konten">
+                <%- berita.konten %>
+            </div>
+
+            <div class="berita-footer">
+                <a href="/berita" class="btn btn-secondary">← Kembali ke Berita</a>
+            </div>
+        </article>
+    </div>
+</section>

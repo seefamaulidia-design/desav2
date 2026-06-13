@@ -1,0 +1,242 @@
+<%- include('../layout') %>
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item active">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Kelola Data Penduduk</h1>
+            </div>
+
+            <!-- Add New Button -->
+            <div class="admin-toolbar">
+                <button class="btn btn-primary" onclick="showAddForm()">
+                    <i class="fas fa-plus"></i> Tambah Penduduk
+                </button>
+                <input type="text" id="searchInput" placeholder="Cari penduduk..." class="search-box">
+            </div>
+
+            <!-- Add/Edit Form -->
+            <div id="formContainer" class="form-container" style="display: none;">
+                <h3>Form Data Penduduk</h3>
+                <form id="dataForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>NIK *</label>
+                            <input type="text" name="nik" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama *</label>
+                            <input type="text" name="nama" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tempat Lahir</label>
+                            <input type="text" name="tempat_lahir">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Jenis Kelamin</label>
+                            <select name="jenis_kelamin">
+                                <option value="">Pilih</option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status Pernikahan</label>
+                            <select name="status_pernikahan">
+                                <option value="">Pilih</option>
+                                <option value="Belum Kawin">Belum Kawin</option>
+                                <option value="Kawin">Kawin</option>
+                                <option value="Cerai Hidup">Cerai Hidup</option>
+                                <option value="Cerai Mati">Cerai Mati</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <input type="text" name="alamat">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dusun</label>
+                            <input type="text" name="dusun">
+                        </div>
+                        <div class="form-group">
+                            <label>RW</label>
+                            <input type="text" name="rw">
+                        </div>
+                        <div class="form-group">
+                            <label>RT</label>
+                            <input type="text" name="rt">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Pekerjaan</label>
+                            <input type="text" name="pekerjaan">
+                        </div>
+                        <div class="form-group">
+                            <label>Pendidikan</label>
+                            <select name="pendidikan">
+                                <option value="">Pilih</option>
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                                <option value="Diploma">Diploma</option>
+                                <option value="Sarjana">Sarjana</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Agama</label>
+                            <select name="agama">
+                                <option value="">Pilih</option>
+                                <option value="Islam">Islam</option>
+                                <option value="Kristen">Kristen</option>
+                                <option value="Katolik">Katolik</option>
+                                <option value="Hindu">Hindu</option>
+                                <option value="Buddha">Buddha</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>NIK</th>
+                            <th>Nama</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Alamat</th>
+                            <th>Pekerjaan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <% if (penduduk && penduduk.length > 0) { %>
+                            <% penduduk.forEach(p => { %>
+                                <tr data-id="<%= p.id %>">
+                                    <td><%= p.nik %></td>
+                                    <td><%= p.nama %></td>
+                                    <td><%= p.jenis_kelamin %></td>
+                                    <td><%= p.alamat %> RT <%= p.rt %> RW <%= p.rw %></td>
+                                    <td><%= p.pekerjaan || '-' %></td>
+                                    <td>
+                                        <button class="btn-small btn-edit" onclick="editData(<%= p.id %>)">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn-small btn-delete" onclick="deleteData(<%= p.id %>)">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="pagination">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="/admin/data-penduduk?page=<%= i %>" class="page-link <%= i === currentPage ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                </div>
+            <% } %>
+        </main>
+    </div>
+</section>
+
+<script>
+function showAddForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').reset();
+}
+
+function hideForm() {
+    document.getElementById('formContainer').style.display = 'none';
+}
+
+document.getElementById('dataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    fetch('/admin/data-penduduk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    });
+});
+
+function deleteData(id) {
+    if (confirm('Yakin ingin menghapus data ini?')) {
+        fetch(`/admin/data-penduduk/${id}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) location.reload();
+            else alert(d.message);
+        });
+    }
+}
+</script>

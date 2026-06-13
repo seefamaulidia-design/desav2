@@ -1,0 +1,131 @@
+<%- include('../layout') %>
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item active">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Kelola Pengumuman</h1>
+            </div>
+
+            <!-- Add Button -->
+            <div class="admin-toolbar">
+                <button class="btn btn-primary" onclick="showAddForm()">
+                    <i class="fas fa-plus"></i> Buat Pengumuman Baru
+                </button>
+            </div>
+
+            <!-- Add Form -->
+            <div id="formContainer" class="form-container" style="display: none;">
+                <h3>Form Pengumuman</h3>
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label>Judul Pengumuman *</label>
+                        <input type="text" name="judul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Isi Pengumuman *</label>
+                        <textarea name="konten" rows="8" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Publish</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pengumuman List -->
+            <div class="pengumuman-list">
+                <% if (pengumuman && pengumuman.length > 0) { %>
+                    <% pengumuman.forEach(item => { %>
+                        <div class="pengumuman-item-admin">
+                            <div class="pengumuman-header">
+                                <h3><%= item.judul %></h3>
+                                <p class="pengumuman-date">
+                                    <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                                </p>
+                            </div>
+                            <p class="pengumuman-excerpt"><%= item.konten.substring(0, 200) %>...</p>
+                            <div class="pengumuman-actions">
+                                <button class="btn-small btn-delete" onclick="deletePengumuman(<%= item.id %>)">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-data">Belum ada pengumuman</p>
+                <% } %>
+            </div>
+        </main>
+    </div>
+</section>
+
+<script>
+function showAddForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').reset();
+}
+
+function hideForm() {
+    document.getElementById('formContainer').style.display = 'none';
+}
+
+document.getElementById('dataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    fetch('/admin/pengumuman', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            location.reload();
+        } else {
+            alert(d.message);
+        }
+    });
+});
+
+function deletePengumuman(id) {
+    if (confirm('Yakin ingin menghapus pengumuman ini?')) {
+        fetch(`/admin/pengumuman/${id}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) location.reload();
+            else alert(d.message);
+        });
+    }
+}
+</script>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Desa Way Ilahan</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-lock"></i>
+                <h1>Login Admin</h1>
+                <p>Sistem Data Desa Way Ilahan</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" name="username" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+            <div id="loadingMessage" class="alert alert-info" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+
+            <div class="login-footer">
+                <p>Hubungi administrator jika lupa password</p>
+                <a href="/">← Kembali ke Beranda</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+
+        fetch('/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loadingMessage').style.display = 'none';
+            
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                document.getElementById('errorMessage').textContent = data.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+            document.getElementById('errorMessage').style.display = 'block';
+            console.error('Error:', error);
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Kontak dan Pengaduan</h1>
+
+        <div class="contact-section">
+            <div class="contact-info">
+                <h2>Hubungi Kami</h2>
+                <div class="info-box">
+                    <h3>Kantor Desa Way Ilahan</h3>
+                    <p><i class="fas fa-map-pin"></i> Desa Way Ilahan, Kecamatan Pulau Panggung, Kabupaten Tanggamus, Provinsi Lampung</p>
+                    <p><i class="fas fa-phone"></i> Telepon: (0726) XXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> Email: info@desawayilahan.id</p>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h2>Form Pengaduan/Saran/Masukan</h2>
+                <form id="pengaduanForm">
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap *</label>
+                        <input type="text" id="nama" name="nama" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telepon">Nomor Telepon</label>
+                        <input type="tel" id="telepon" name="telepon">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="judul">Judul Pengaduan/Saran *</label>
+                        <input type="text" id="judul" name="judul" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="isi">Isi Pengaduan/Saran *</label>
+                        <textarea id="isi" name="isi" rows="6" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Kirim Pengaduan
+                    </button>
+                </form>
+
+                <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+                <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('pengaduanForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        nama: document.getElementById('nama').value,
+        email: document.getElementById('email').value,
+        telepon: document.getElementById('telepon').value,
+        judul: document.getElementById('judul').value,
+        isi: document.getElementById('isi').value
+    };
+
+    fetch('/pengaduan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('successMessage').textContent = data.message;
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('pengaduanForm').reset();
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        } else {
+            document.getElementById('errorMessage').textContent = data.message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('errorMessage').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        document.getElementById('errorMessage').style.display = 'block';
+    });
+});
+</script>

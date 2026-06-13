@@ -1,0 +1,103 @@
+<%- include('layout') %>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Selamat Datang di Desa Way Ilahan</h1>
+        <p>Transparansi Data dan Keuangan Desa untuk Kemajuan Bersama</p>
+        <div class="hero-buttons">
+            <a href="/profil-desa" class="btn btn-primary">Profil Desa</a>
+            <a href="/apbdes" class="btn btn-secondary">Lihat Keuangan</a>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="statistics">
+    <div class="container">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h3>Penduduk</h3>
+            <p class="stat-number">Data Terpercaya</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-file-contract"></i>
+            <h3>Keuangan Transparan</h3>
+            <p class="stat-number">APBDes & Realisasi</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-building"></i>
+            <h3>Program Kegiatan</h3>
+            <p class="stat-number">Pembangunan Berkelanjutan</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-newspaper"></i>
+            <h3>Berita & Info</h3>
+            <p class="stat-number">Informasi Terkini</p>
+        </div>
+    </div>
+</section>
+
+<!-- Latest News Section -->
+<section class="latest-news">
+    <div class="container">
+        <h2>Berita Terbaru</h2>
+        <div class="news-grid">
+            <% if (berita && berita.length > 0) { %>
+                <% berita.forEach(item => { %>
+                    <article class="news-card">
+                        <% if (item.foto) { %>
+                            <div class="news-image">
+                                <img src="/uploads/<%= item.foto %>" alt="<%= item.judul %>">
+                            </div>
+                        <% } %>
+                        <div class="news-content">
+                            <h3><a href="/berita/<%= item.id %>"><%= item.judul %></a></h3>
+                            <p class="news-meta">Oleh: <%= item.penulis %> | <%= new Date(item.created_at).toLocaleDateString('id-ID') %></p>
+                            <p><%= item.konten.substring(0, 150) %>...</p>
+                            <a href="/berita/<%= item.id %>" class="read-more">Baca Selengkapnya →</a>
+                        </div>
+                    </article>
+                <% }); %>
+            <% } else { %>
+                <p class="no-data">Belum ada berita</p>
+            <% } %>
+        </div>
+        <div class="text-center">
+            <a href="/berita" class="btn btn-primary">Lihat Semua Berita</a>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Access Section -->
+<section class="quick-access">
+    <div class="container">
+        <h2>Akses Cepat</h2>
+        <div class="quick-links">
+            <a href="/data-penduduk" class="quick-link-card">
+                <i class="fas fa-people-group"></i>
+                <h3>Data Penduduk</h3>
+            </a>
+            <a href="/apbdes" class="quick-link-card">
+                <i class="fas fa-wallet"></i>
+                <h3>APBDes</h3>
+            </a>
+            <a href="/aparatur" class="quick-link-card">
+                <i class="fas fa-user-tie"></i>
+                <h3>Aparatur Desa</h3>
+            </a>
+            <a href="/galeri" class="quick-link-card">
+                <i class="fas fa-images"></i>
+                <h3>Galeri Foto</h3>
+            </a>
+            <a href="/dokumen" class="quick-link-card">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Dokumen</h3>
+            </a>
+            <a href="/pengaduan" class="quick-link-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Pengaduan</h3>
+            </a>
+        </div>
+    </div>
+</section>

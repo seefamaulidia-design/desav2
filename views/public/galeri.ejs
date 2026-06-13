@@ -1,0 +1,28 @@
+<%- include('../layout') %>
+
+<section class="page-content">
+    <div class="container">
+        <h1>Galeri Foto Desa Way Ilahan</h1>
+
+        <div class="gallery-grid">
+            <% if (galeri && galeri.length > 0) { %>
+                <% galeri.forEach(item => { %>
+                    <div class="gallery-item">
+                        <div class="gallery-image">
+                            <img src="/uploads/<%= item.foto %>" alt="<%= item.judul %>">
+                        </div>
+                        <div class="gallery-info">
+                            <h3><%= item.judul %></h3>
+                            <p><%= item.deskripsi %></p>
+                            <% if (item.kategori) { %>
+                                <span class="badge"><%= item.kategori %></span>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p class="no-data">Belum ada foto di galeri</p>
+            <% } %>
+        </div>
+    </div>
+</section>
