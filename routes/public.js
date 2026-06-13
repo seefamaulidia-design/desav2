@@ -3,6 +3,11 @@ const router = express.Router();
 const publicController = require('../controllers/publicController');
 
 // Public Routes
+router.get('/login', publicController.getPublicLogin);
+router.post('/login', publicController.postPublicLogin);
+router.get('/register', publicController.getPublicRegister);
+router.post('/register', publicController.postPublicRegister);
+router.get('/logout', publicController.getPublicLogout);
 router.get('/', publicController.getHome);
 router.get('/profil-desa', publicController.getProfilDesa);
 router.get('/data-penduduk', publicController.getDataPenduduk);

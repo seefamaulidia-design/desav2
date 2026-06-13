@@ -16,12 +16,12 @@
                 <p>Sistem Data Desa Way Ilahan</p>
             </div>
 
-            <form id="loginForm" class="login-form">
+            <form id="loginForm" class="login-form" method="POST" action="/admin/login">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="username" name="username" placeholder="Masukkan username" required>
+                        <input type="text" id="username" name="username" placeholder="Masukkan username" required value="<%= username %>">
                     </div>
                 </div>
 
@@ -38,6 +38,9 @@
                 </button>
             </form>
 
+            <% if (errorMessage) { %>
+                <div class="alert alert-error"><%= errorMessage %></div>
+            <% } %>
             <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
             <div id="loadingMessage" class="alert alert-info" style="display: none;">
                 <i class="fas fa-spinner fa-spin"></i> Loading...
@@ -51,40 +54,52 @@
     </div>
 
     <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        document.getElementById('loadingMessage').style.display = 'block';
-        document.getElementById('errorMessage').style.display = 'none';
-
-        fetch('/admin/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('loadingMessage').style.display = 'none';
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            if (data.success) {
-                window.location.href = data.redirect;
-            } else {
-                document.getElementById('errorMessage').textContent = data.message;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            fetch('/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(async response => {
+                document.getElementById('loadingMessage').style.display = 'none';
+                const contentType = response.headers.get('Content-Type') || '';
+
+                if (contentType.includes('application/json')) {
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        document.getElementById('errorMessage').textContent = data.message;
+                        document.getElementById('errorMessage').style.display = 'block';
+                    }
+                } else {
+                    const html = await response.text();
+                    document.open();
+                    document.write(html);
+                    document.close();
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
                 document.getElementById('errorMessage').style.display = 'block';
-            }
-        })
-        .catch(error => {
-            document.getElementById('loadingMessage').style.display = 'none';
-            document.getElementById('errorMessage').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
-            document.getElementById('errorMessage').style.display = 'block';
-            console.error('Error:', error);
+                console.error('Error:', error);
+            });
         });
-    });
+    }
     </script>
 </body>
 </html>

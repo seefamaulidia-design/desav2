@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-user-plus"></i>
+                <h1>Daftar Masyarakat</h1>
+                <p>Isi data untuk mendaftar sebagai masyarakat desa</p>
+            </div>
+
+            <% if (errorMessage) { %>
+                <div class="alert alert-error"><%= errorMessage %></div>
+            <% } %>
+
+            <form class="login-form" method="POST" action="/register">
+                <div class="form-group">
+                    <label for="nik">NIK</label>
+                    <input type="text" id="nik" name="nik" placeholder="Masukkan NIK" required value="<%= formData.nik %>">
+                </div>
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required value="<%= formData.nama %>">
+                </div>
+                <div class="form-group">
+                    <label for="alamat">Alamat</label>
+                    <input type="text" id="alamat" name="alamat" placeholder="Alamat" value="<%= formData.alamat %>">
+                </div>
+                <div class="form-group">
+                    <label for="dusun">Dusun</label>
+                    <input type="text" id="dusun" name="dusun" placeholder="Dusun" value="<%= formData.dusun %>">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rt">RT</label>
+                        <input type="text" id="rt" name="rt" placeholder="RT" value="<%= formData.rt %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="rw">RW</label>
+                        <input type="text" id="rw" name="rw" placeholder="RW" value="<%= formData.rw %>">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-check"></i> Daftar
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>Sudah punya akun? <a href="/login">Login Masyarakat</a></p>
+                <p>Jika Anda admin, silakan <a href="/admin/login">login admin</a>.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

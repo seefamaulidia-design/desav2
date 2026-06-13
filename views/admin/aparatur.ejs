@@ -1,0 +1,153 @@
+
+<section class="admin-page">
+    <div class="admin-container">
+        <!-- Admin Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Admin Panel</h2>
+                <p><%= admin.nama_lengkap %></p>
+            </div>
+            <nav class="admin-menu">
+                <a href="/admin/dashboard" class="menu-item">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/admin/data-penduduk" class="menu-item">
+                    <i class="fas fa-users"></i> Data Penduduk
+                </a>
+                <a href="/admin/keuangan" class="menu-item">
+                    <i class="fas fa-wallet"></i> Keuangan Desa
+                </a>
+                <a href="/admin/berita" class="menu-item">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="/admin/pengumuman" class="menu-item">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+                <a href="/admin/aparatur" class="menu-item active">
+                    <i class="fas fa-user-tie"></i> Aparatur
+                </a>
+                <a href="/admin/logout" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Kelola Aparatur Desa</h1>
+            </div>
+
+            <% if (successMessage) { %>
+                <div class="alert alert-success"><%= successMessage %></div>
+            <% } %>
+            <% if (errorMessage) { %>
+                <div class="alert alert-error"><%= errorMessage %></div>
+            <% } %>
+
+            <div class="admin-toolbar">
+                <button class="btn btn-primary" onclick="showAddForm()">
+                    <i class="fas fa-plus"></i> Tambah Aparatur
+                </button>
+            </div>
+
+            <div id="formContainer" class="form-container" style="display: none;">
+                <h3>Form Aparatur</h3>
+                <form id="dataForm" method="POST" action="/admin/aparatur">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nama *</label>
+                            <input type="text" name="nama" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jabatan *</label>
+                            <input type="text" name="jabatan" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>NIK</label>
+                            <input type="text" name="nik">
+                        </div>
+                        <div class="form-group">
+                            <label>Kontak</label>
+                            <input type="text" name="kontak">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <input type="text" name="alamat">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Jabatan</th>
+                            <th>NIK</th>
+                            <th>Kontak</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (aparatur && aparatur.length > 0) { %>
+                            <% aparatur.forEach(item => { %>
+                                <tr>
+                                    <td><%= item.nama %></td>
+                                    <td><%= item.jabatan %></td>
+                                    <td><%= item.nik || '-' %></td>
+                                    <td><%= item.kontak || '-' %></td>
+                                    <td>
+                                        <button class="btn-small btn-edit" onclick="fillEditForm(<%= item.id %>, '<%= item.nama.replace(/'/g, "\\'") %>', '<%= item.jabatan.replace(/'/g, "\\'") %>', '<%= (item.nik || '').replace(/'/g, "\\'") %>', '<%= (item.kontak || '').replace(/'/g, "\\'") %>', '<%= (item.alamat || '').replace(/'/g, "\\'") %>')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <form method="POST" action="/admin/aparatur/<%= item.id %>/delete" style="display:inline;">
+                                            <button type="submit" class="btn-small btn-delete" onclick="return confirm('Yakin ingin menghapus aparatur ini?');">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5">Belum ada data aparatur</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</section>
+
+<script>
+function showAddForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').reset();
+    document.getElementById('dataForm').action = '/admin/aparatur';
+}
+
+function hideForm() {
+    document.getElementById('formContainer').style.display = 'none';
+}
+
+function fillEditForm(id, nama, jabatan, nik, kontak, alamat) {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('dataForm').action = '/admin/aparatur/' + id + '/edit';
+    document.querySelector('input[name="nama"]').value = nama;
+    document.querySelector('input[name="jabatan"]').value = jabatan;
+    document.querySelector('input[name="nik"]').value = nik;
+    document.querySelector('input[name="kontak"]').value = kontak;
+    document.querySelector('input[name="alamat"]').value = alamat;
+}
+</script>

@@ -22,6 +22,9 @@
                 <a href="/admin/pengumuman" class="menu-item">
                     <i class="fas fa-bullhorn"></i> Pengumuman
                 </a>
+                <a href="/admin/aparatur" class="menu-item">
+                    <i class="fas fa-user-tie"></i> Aparatur
+                </a>
                 <a href="/admin/logout" class="menu-item logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
@@ -44,7 +47,13 @@
             <!-- Add Form -->
             <div id="formContainer" class="form-container" style="display: none;">
                 <h3>Form Berita</h3>
-                <form id="dataForm" enctype="multipart/form-data">
+                <% if (successMessage) { %>
+                    <div class="alert alert-success"><%= successMessage %></div>
+                <% } %>
+                <% if (errorMessage) { %>
+                    <div class="alert alert-error"><%= errorMessage %></div>
+                <% } %>
+                <form id="dataForm" method="POST" action="/admin/berita" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Judul Berita *</label>
                         <input type="text" name="judul" required>
@@ -112,14 +121,25 @@ document.getElementById('dataForm').addEventListener('submit', function(e) {
 
     fetch('/admin/berita', {
         method: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        },
         body: formData
     })
-    .then(r => r.json())
-    .then(d => {
-        if (d.success) {
-            location.reload();
+    .then(async response => {
+        const contentType = response.headers.get('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+            const d = await response.json();
+            if (d.success) {
+                location.reload();
+            } else {
+                alert(d.message);
+            }
         } else {
-            alert(d.message);
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
         }
     });
 });

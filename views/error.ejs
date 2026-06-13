@@ -11,7 +11,7 @@
         <div class="error-content">
             <h1>Oops! Ada Kesalahan</h1>
             <p><%= message %></p>
-            <% if (error && typeof error === 'object' && error.message) { %>
+            <% if (typeof error !== 'undefined' && error && typeof error === 'object' && error.message) { %>
                 <details>
                     <summary>Detail Error</summary>
                     <pre><%= error.message %></pre>

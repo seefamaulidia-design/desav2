@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const expressEjsLayouts = require('express-ejs-layouts');
 const db = require('./database/init.js');
-const { checkPublic, logActivity } = require('./middleware/auth');
+const { checkPublic, checkPublicAuth, logActivity } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,11 +30,21 @@ app.use(session({
   cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 } // 24 hours
 }));
 
+// Default view locals for auth state
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.session && req.session.admin ? true : false;
+  res.locals.admin = req.session && req.session.admin ? req.session.admin : null;
+  res.locals.isPublicLoggedIn = req.session && req.session.publicUser ? true : false;
+  res.locals.publicUser = req.session && req.session.publicUser ? req.session.publicUser : null;
+  next();
+});
+
 // Activity logging middleware
 app.use(logActivity);
 
 // Public middleware
 app.use(checkPublic);
+app.use(checkPublicAuth);
 
 // Routes
 const publicRoutes = require('./routes/public');

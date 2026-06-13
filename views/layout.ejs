@@ -45,6 +45,15 @@
                         <a href="/pengaduan" class="dropdown-item">Kontak & Pengaduan</a>
                     </div>
                 </div>
+                <% const publicLoggedIn = typeof isPublicLoggedIn !== 'undefined' ? isPublicLoggedIn : false; %>
+                <% const currentPublicUser = typeof publicUser !== 'undefined' ? publicUser : null; %>
+                <% const adminLoggedIn = typeof isLoggedIn !== 'undefined' ? isLoggedIn : false; %>
+                <% const currentAdmin = typeof admin !== 'undefined' ? admin : null; %>
+                <% if (publicLoggedIn) { %>
+                    <a href="/logout" class="nav-link">Halo, <%= currentPublicUser ? currentPublicUser.nama : 'Pengguna' %></a>
+                <% } else { %>
+                    <a href="/login" class="nav-link">Login Masyarakat</a>
+                <% } %>
                 <% if (isLoggedIn) { %>
                     <div class="dropdown">
                         <a href="#" class="nav-link dropdown-toggle"><%= admin.nama_lengkap %></a>

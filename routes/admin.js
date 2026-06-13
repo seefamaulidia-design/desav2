@@ -42,6 +42,12 @@ router.get('/pengumuman', checkAuth, adminController.getPengumuman);
 router.post('/pengumuman', checkAuth, adminController.postPengumuman);
 router.delete('/pengumuman/:id', checkAuth, adminController.deletePengumuman);
 
+// Aparatur Desa
+router.get('/aparatur', checkAuth, adminController.getAparaturAdmin);
+router.post('/aparatur', checkAuth, adminController.postAparatur);
+router.post('/aparatur/:id/edit', checkAuth, adminController.postEditAparatur);
+router.post('/aparatur/:id/delete', checkAuth, adminController.deleteAparatur);
+
 // Keuangan
 router.get('/keuangan', checkAuth, adminController.getKeuangan);
 router.post('/keuangan', checkAuth, adminController.postKeuangan);

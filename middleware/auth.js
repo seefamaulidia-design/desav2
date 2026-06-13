@@ -1,4 +1,4 @@
-// Middleware untuk mengecek apakah user sudah login
+// Middleware untuk mengecek apakah user admin sudah login
 function checkAuth(req, res, next) {
   if (req.session && req.session.admin) {
     next();
@@ -7,19 +7,45 @@ function checkAuth(req, res, next) {
   }
 }
 
-// Middleware untuk mengecek apakah bukan admin (untuk halaman publik)
+// Middleware untuk mengecek apakah user publik sudah login
+function checkPublicAuth(req, res, next) {
+  if (req.path.startsWith('/admin')) {
+    return next();
+  }
+
+  if (req.path === '/login' || req.path === '/logout' || req.path === '/register' || req.path === '/public-login') {
+    return next();
+  }
+
+  if (req.session && req.session.publicUser) {
+    return next();
+  }
+
+  return res.redirect('/login');
+}
+
+// Middleware untuk mengecek session dan memberikan data user ke view
 function checkPublic(req, res, next) {
-  // Jika sudah login, tambahkan informasi user
   if (req.session && req.session.admin) {
     res.locals.isLoggedIn = true;
     res.locals.admin = req.session.admin;
   } else {
     res.locals.isLoggedIn = false;
+    res.locals.admin = null;
   }
+
+  if (req.session && req.session.publicUser) {
+    res.locals.publicUser = req.session.publicUser;
+    res.locals.isPublicLoggedIn = true;
+  } else {
+    res.locals.publicUser = null;
+    res.locals.isPublicLoggedIn = false;
+  }
+
   next();
 }
 
-// Middleware untuk logging aktivitas
+// Middleware untuk logging aktivitas admin
 function logActivity(req, res, next) {
   const db = require('../database/init.js');
   
@@ -43,5 +69,6 @@ function logActivity(req, res, next) {
 module.exports = {
   checkAuth,
   checkPublic,
+  checkPublicAuth,
   logActivity
 };

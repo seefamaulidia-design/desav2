@@ -71,7 +71,7 @@ const getWilayah = (req, res) => {
 };
 
 const getAparatur = (req, res) => {
-  db.all('SELECT * FROM aparatur_desa ORDER BY jabatan', (err, aparatur) => {
+  db.all('SELECT nama, jabatan, foto FROM aparatur_desa ORDER BY jabatan', (err, aparatur) => {
     if (err) {
       return res.status(500).render('error', { message: 'Error loading data' });
     }
@@ -80,6 +80,152 @@ const getAparatur = (req, res) => {
       aparatur: aparatur
     });
   });
+};
+
+const getPublicLogin = (req, res) => {
+  res.render('public/login', {
+    layout: false,
+    title: 'Login Masyarakat - Desa Way Ilahan',
+    errorMessage: '',
+    successMessage: '',
+    nik: ''
+  });
+};
+
+const getPublicRegister = (req, res) => {
+  res.render('public/register', {
+    layout: false,
+    title: 'Daftar Masyarakat - Desa Way Ilahan',
+    errorMessage: '',
+    formData: {
+      nik: '',
+      nama: '',
+      alamat: '',
+      dusun: '',
+      rt: '',
+      rw: ''
+    }
+  });
+};
+
+const postPublicRegister = (req, res) => {
+  const { nik, nama, alamat, dusun, rt, rw } = req.body;
+  const formData = { nik, nama, alamat, dusun, rt, rw };
+
+  if (!nik || !nama) {
+    return res.status(400).render('public/register', {
+      layout: false,
+      title: 'Daftar Masyarakat - Desa Way Ilahan',
+      errorMessage: 'NIK dan Nama Lengkap harus diisi',
+      formData
+    });
+  }
+
+  db.get('SELECT id FROM data_penduduk WHERE nik = ?', [nik.trim()], (err, existing) => {
+    if (err) {
+      return res.status(500).render('public/register', {
+        layout: false,
+        title: 'Daftar Masyarakat - Desa Way Ilahan',
+        errorMessage: 'Terjadi kesalahan saat memeriksa NIK.',
+        formData
+      });
+    }
+
+    if (existing) {
+      return res.status(409).render('public/register', {
+        layout: false,
+        title: 'Daftar Masyarakat - Desa Way Ilahan',
+        errorMessage: 'NIK sudah terdaftar. Silakan gunakan NIK lain atau login.',
+        formData
+      });
+    }
+
+    db.run(
+      `INSERT INTO data_penduduk (nik, nama, alamat, dusun, rt, rw)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [nik.trim(), nama.trim(), alamat, dusun, rt, rw],
+      function(insertErr) {
+        if (insertErr) {
+          return res.status(500).render('public/register', {
+            layout: false,
+            title: 'Daftar Masyarakat - Desa Way Ilahan',
+            errorMessage: 'Terjadi kesalahan saat menyimpan data.',
+            formData
+          });
+        }
+
+        req.session.publicUser = {
+          id: this.lastID,
+          nik: nik.trim(),
+          nama: nama.trim(),
+          alamat,
+          dusun,
+          rt,
+          rw
+        };
+
+        res.redirect('/');
+      }
+    );
+  });
+};
+
+const postPublicLogin = (req, res) => {
+  const { nik, nama } = req.body;
+
+  if (!nik || !nama) {
+    return res.status(400).render('public/login', {
+      layout: false,
+      title: 'Login Masyarakat - Desa Way Ilahan',
+      errorMessage: 'NIK dan Nama harus diisi',
+      successMessage: '',
+      nik: nik || ''
+    });
+  }
+
+  db.get(
+    'SELECT * FROM data_penduduk WHERE nik = ? AND nama = ?',
+    [nik.trim(), nama.trim()],
+    (err, penduduk) => {
+      if (err) {
+        return res.status(500).render('public/login', {
+          layout: false,
+          title: 'Login Masyarakat - Desa Way Ilahan',
+          errorMessage: 'Terjadi kesalahan saat login. Silakan coba lagi.',
+          successMessage: '',
+          nik: nik || ''
+        });
+      }
+
+      if (!penduduk) {
+        return res.status(401).render('public/login', {
+          layout: false,
+          title: 'Login Masyarakat - Desa Way Ilahan',
+          errorMessage: 'Data masyarakat tidak ditemukan atau belum terdaftar.',
+          successMessage: '',
+          nik: nik || ''
+        });
+      }
+
+      req.session.publicUser = {
+        id: penduduk.id,
+        nik: penduduk.nik,
+        nama: penduduk.nama,
+        dusun: penduduk.dusun,
+        rt: penduduk.rt,
+        rw: penduduk.rw
+      };
+
+      res.redirect('/');
+    }
+  );
+};
+
+const getPublicLogout = (req, res) => {
+  if (req.session) {
+    req.session.publicUser = null;
+  }
+  res.redirect('/login');
 };
 
 const getAPBDes = (req, res) => {
@@ -242,7 +388,7 @@ const getPengaduan = (req, res) => {
 
 const postPengaduan = (req, res) => {
   const { nama, email, telepon, judul, isi } = req.body;
-  const wantsJson = req.xhr || (req.get('Accept') && req.get('Accept').includes('application/json'));
+  const wantsJson = req.xhr || req.is('json') || (req.get('Accept') && req.get('Accept').includes('application/json'));
   const formData = { nama, email, telepon, judul, isi };
 
   if (!nama || !email || !judul || !isi) {
@@ -301,6 +447,11 @@ module.exports = {
   getDataPenduduk,
   getWilayah,
   getAparatur,
+  getPublicLogin,
+  postPublicLogin,
+  getPublicLogout,
+  getPublicRegister,
+  postPublicRegister,
   getAPBDes,
   getRealisasiAnggaran,
   getProgramKegiatan,

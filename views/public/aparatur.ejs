@@ -7,29 +7,9 @@
             <% if (aparatur && aparatur.length > 0) { %>
                 <% aparatur.forEach(a => { %>
                     <div class="aparatur-card">
-                        <% if (a.foto) { %>
-                            <div class="aparatur-foto">
-                                <img src="/uploads/<%= a.foto %>" alt="<%= a.nama %>">
-                            </div>
-                        <% } else { %>
-                            <div class="aparatur-foto placeholder">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        <% } %>
                         <div class="aparatur-info">
                             <h3><%= a.nama %></h3>
                             <p class="jabatan"><%= a.jabatan %></p>
-                            <p class="nik">NIK: <%= a.nik %></p>
-                            <% if (a.kontak) { %>
-                                <p class="kontak">
-                                    <i class="fas fa-phone"></i> <%= a.kontak %>
-                                </p>
-                            <% } %>
-                            <% if (a.alamat) { %>
-                                <p class="alamat">
-                                    <i class="fas fa-map-pin"></i> <%= a.alamat %>
-                                </p>
-                            <% } %>
                         </div>
                     </div>
                 <% }); %>
