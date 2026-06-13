@@ -101,6 +101,29 @@ Sistem Data Desa Way Ilahan adalah aplikasi web yang dirancang untuk:
    - Website publik: `http://localhost:3000`
    - Admin login: `http://localhost:3000/admin/login`
 
+> **Catatan penting**: aplikasi ini bukan situs statis. Jangan gunakan GitHub Pages untuk akses `/login`, `/register`, atau halaman admin.
+> GitHub Pages hanya bisa menampilkan file statis, sedangkan aplikasi ini membutuhkan server Node/Express.
+
+### Menjalankan di host yang mendukung Node
+
+Jika ingin deploy, gunakan platform Node seperti:
+- Render
+- Railway
+- Fly.io
+- Heroku
+- Vercel (Node deployment)
+
+Pada platform tersebut, jalankan dengan perintah:
+```bash
+npm install
+npm start
+```
+
+Jika ingin menggunakan port berbeda saat testing lokal:
+```bash
+PORT=3001 npm start
+```
+
 ## 🔐 Kredensial Default
 
 **Admin Default:**
